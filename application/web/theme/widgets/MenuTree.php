@@ -100,7 +100,7 @@ class MenuTree extends Widget
             }
             return $result;
         } else {
-            return false;
+            return [];
         } 
     }
 

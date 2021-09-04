@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'Myriad Pro';
+    src: url('../fonts/MyriadPro-Regular.eot');
+    src: url('../fonts/MyriadPro-Regular.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/MyriadPro-Regular.woff') format('woff'),
+    url('../fonts/MyriadPro-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Myriad Pro';
+    src: url('../fonts/MyriadPro-It.eot');
+    src: url('../fonts/MyriadPro-It.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/MyriadPro-It.woff') format('woff'),
+    url('../fonts/MyriadPro-It.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Utily';
+    src: url('../fonts/Utily-Black.eot');
+    src: url('../fonts/Utily-Black.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/Utily-Black.woff') format('woff'),
+    url('../fonts/Utily-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Utily';
+    src: url('../fonts/Utily-Bold.eot');
+    src: url('../fonts/Utily-Bold.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/Utily-Bold.woff') format('woff'),
+    url('../fonts/Utily-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}

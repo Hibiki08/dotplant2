@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-dbcred-configmap
+data:
+  db-local.php: |
+    <?php
+
+    return [
+    'dsn' => 'mysql:host={{ pluck .Values.global.env .Values.mysql.path | first | default .Values.mysql.path._default }};dbname={{ pluck .Values.global.env .Values.mysql.db | first | default .Values.mysql.db._default }}',
+    'username' => '{{ pluck .Values.global.env .Values.mysql.user | first | default .Values.mysql.user._default }}',
+    'password' => '{{ pluck .Values.global.env .Values.mysql.pass | first | default .Values.mysql.pass._default }}',
+    ];
+
+  db-parser.php: |
+    <?php
+
+    $host = '{{ pluck .Values.global.env .Values.mysql.path | first | default .Values.mysql.path._default }}';
+    $db = '{{ pluck .Values.global.env .Values.mysql.db | first | default .Values.mysql.db._default }}';
+    $user = '{{ pluck .Values.global.env .Values.mysql.user | first | default .Values.mysql.user._default }}';  
+    $pass = '{{ pluck .Values.global.env .Values.mysql.pass | first | default .Values.mysql.pass._default }}';

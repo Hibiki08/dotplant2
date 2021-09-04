@@ -1,0 +1,25 @@
+.packages-grid .package {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 4px;
+}
+.packages-grid .package .package-name {
+  font-size: 120%;
+  font-weight: bold;
+  color: #3e3e3e;
+}
+.packages-grid .package .description {
+  height: 120px;
+  overflow: hidden;
+}
+.packages-grid .package .repository-url {
+  font-size: 80%;
+  color: #666666;
+  text-decoration: underline;
+  margin: 4px;
+  display: block;
+}
+
+.packages-search {
+  margin-bottom: 8px;
+}

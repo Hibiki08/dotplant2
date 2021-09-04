@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      volumes:
+      - name: backend-config
+        configMap:
+          name: {{ .Chart.Name }}-configmap
+      - name: dbcred-config
+        configMap:
+          name: {{ .Chart.Name }}-dbcred-configmap
+      - name: shared-files
+        persistentVolumeClaim:
+          claimName: data-pvc
+      containers:
+      - name: php
+{{ tuple "app" . | include "werf_container_image" | indent 8 }}
+        lifecycle:
+          postStart:
+            exec:
+              command: ["chown", "-R", "www-data:www-data","/app/web/files"]
+        command: ["/usr/bin/supervisord", "-n", "-c","/etc/supervisord.conf"]
+        workingDir: /app
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /_tech/ngx-status
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /_tech/ngx-status
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        env:
+{{ tuple "app" . | include "werf_container_env" | indent 8 }}
+        volumeMounts:
+        - name: backend-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: backend-config
+          mountPath: /usr/local/etc/php-fpm.d/www.conf
+          subPath: www.conf
+        - name: backend-config
+          mountPath: /usr/local/etc/php-fpm.conf
+          subPath: php-fpm.conf
+        - name: dbcred-config
+          mountPath: /app/config/db-local.php
+          subPath: db-local.php
+        - name: dbcred-config
+          mountPath: /app/web/db-local.php
+          subPath: db-parser.php
+        - name: shared-files
+          mountPath: /app/web/files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-service
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Chart.Name }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80

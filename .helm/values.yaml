@@ -1,0 +1,5 @@
+ing_url:
+  magazin:
+    dev: "mag-dev.dev59.ru"
+    prod: "*.sextoys365.ru"
+    _default: "mag-dev.dev59.ru"

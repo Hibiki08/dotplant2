@@ -1,0 +1,99 @@
+project: magazin
+configVersion: 1
+
+---
+image: app
+from:  php:7.3-fpm
+docker:
+  WORKDIR: /app
+  EXPOSE: '80'
+  ENV:
+    TZ: Europe/Moscow
+mount:
+  - from: build_dir
+    to: /var/cache/apt
+  - from: tmp_dir
+    to: /var/lib/apt/lists
+{{ include "get application files" . }}
+ansible:
+  beforeInstall:
+  - name: "Add supervisord config"
+    copy:
+      content: |
+{{ .Files.Get "./.werf/supervisord.conf" | indent 8 }}
+      dest: /etc/supervisord.conf
+  - name: "Create non-root main application user"
+    user:
+      name: www-data
+      comment: "Non-root main application user"
+      uid: 7000
+      shell: /bin/bash
+      home: /app
+  - name:  "install essential utils"
+    apt:
+      update_cache: yes
+      name: [
+        curl,
+        nginx,
+        supervisor,
+        wget,
+        unzip,
+        git,
+        vim,
+        libpq-dev,
+        libpng-dev,
+        libzip-dev,
+        libxml2-dev,
+        libz-dev,
+        libmemcached-dev,
+        libfcgi0ldbl
+      ]
+  install:
+  - name: "install php extensions"
+    shell: |
+      pecl install memcached
+      docker-php-ext-enable memcached
+      docker-php-ext-install -j$(nproc) pdo_mysql mysqli gd zip intl
+{{- include "Set timezone" . | indent 2 }}
+  - name: "Install composer"
+    get_url:
+      url: https://getcomposer.org/download/1.8.6/composer.phar
+      dest: /usr/local/bin/composer
+      mode: 0755
+      checksum: sha256:b66f9b53db72c5117408defe8a1e00515fe749e97ce1b0ae8bdaa6a5a43dd542
+  setup:
+  - name: Composer install
+    become: yes
+    become_user: www-data
+    shell: |
+      composer global require "fxp/composer-asset-plugin:^1.1.0"
+      composer install --prefer-dist --optimize-autoloader
+      php yii stubs config/web.php config/console.php
+    args:
+      chdir: /app
+  
+# Includes
+{{- define "get application files" -}}
+git:
+- add: /application
+  to: /app
+  owner: www-data
+  group: www-data
+  stageDependencies:
+    setup:
+      -  "**/*"
+{{- end }}
+
+{{- define "Set timezone" }}
+- name: "Remove old timezone symlink"
+  file:
+    state: absent
+    path: "/etc/localtime"
+- name: "Set timezone"
+  file:
+    src: /usr/share/zoneinfo/Europe/Moscow
+    dest: /etc/localtime
+    owner: root
+    group: root
+    state: link
+{{- end }}

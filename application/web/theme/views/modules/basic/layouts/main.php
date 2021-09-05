@@ -25,6 +25,12 @@ HtmlTagHelper::addTagOptions('html', 'lang', Yii::$app->language);
 	<!--base href="http://<?= Yii::$app->getModule('core')->getBaseUrl() ?>"-->
 	<title><?= Html::encode($this->title) ?></title>
 	<?= Html::csrfMetaTags() ?>
+    <?php HtmlTagHelper::registerOpenGraph(
+        $this->title,
+        Yii::$app->request->getAbsoluteUrl(),
+        '',
+        Yii::$app->response->meta_description
+    ); ?>
     <?php $this->head(); ?>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
 </head>

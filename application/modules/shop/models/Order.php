@@ -241,6 +241,14 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasMany(OrderTransaction::className(), ['order_id' => 'id']);
     }
 
+    /**
+     * @return OrderTransaction|null
+     */
+    public function getLastTransaction()
+    {
+        return $this->getTransactions()->orderBy(['end_date' => SORT_DESC])->one();
+    }
+
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);

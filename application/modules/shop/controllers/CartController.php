@@ -15,6 +15,7 @@ use app\modules\shop\models\OrderCode;
 use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
+use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\SpecialPriceList;
 use app\modules\shop\ShopModule;
@@ -454,8 +455,10 @@ class CartController extends Controller
         /** @var OrderStage $orderStage */
         $orderStage = $order->stage;
         $eventData = ['order' => $order];
+        $lastTransaction = $order->getLastTransaction();
 
-        if (0 === intval($orderStage->is_in_cart)) {
+        if (0 === intval($orderStage->is_in_cart)
+            || ($lastTransaction && $lastTransaction->status == OrderTransaction::TRANSACTION_SUCCESS)) {
             Yii::$app->session->remove('orderId');
             $order->in_cart = 0;
             $order->save();

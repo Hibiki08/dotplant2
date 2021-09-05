@@ -9,6 +9,7 @@ $psrLogger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout', \Mono
 
 
 $config = [
+    'language' => 'rus-RUS',
     'id' => 'dotplant2',
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),

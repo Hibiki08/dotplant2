@@ -100,17 +100,19 @@ $deliveryInformation->isPickup = ($orderDeliveryInformation->shipping_option_id 
             <?= $form->field($deliveryInformation, 'isPickup')
                 ->hiddenInput(['id' => 'isPickup'])->label(false); ?>
 
-            <?= $form->field($deliveryInformation, 'country_id', ['options' => ['class' => 'user-profile__form-item']])
-                ->widget(Select2::className(), [
-                    'data' => Helper::getModelMap(Country::className(), 'id', 'name'),
+                <?= $form->field($userAddress, 'country_id', [
                     'options' => [
-                        'placeholder' => 'Выберите страну',
-                        'class' => 'input-text country_id-field',
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]); ?>
+                        'id' => 'country_id',
+                        'class' => 'user-profile__form-item'
+                    ]
+                ])
+                    ->dropDownList(
+                        Helper::getModelMap(Country::className(), 'id', 'name'),
+                        [
+                            'class' => 'input-text',
+                        ]
+                    )
+                    ->label('Выберите страну'); ?>
 
             <?= $form->field($deliveryInformation, 'city_id', ['options' => ['class' => 'user-profile__form-item']])
                 ->textInput()

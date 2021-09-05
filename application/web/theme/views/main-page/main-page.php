@@ -54,10 +54,10 @@ $newestId = \app\models\Property::getDb()->cache(function($db) {
         <div class="col-lg-9 col-12">
             <div class="fade">
 
-                <a href="/sale" class="category__title-hot text-xl-left text-sm-center text-center">
+                <div class="category__title-hot text-xl-left text-sm-center text-center">
                     <img class="badge-img" src="/theme/dist/img/icons/sale-badge.svg" width="30" height="30" alt="Выгодные предложения" />
                     <h2>Выгодные предложения</h2>
-                </a>
+                </div>
 
                 <div class="category__body">
                     <div class="owl-carousel owl-carousel-one owl-theme container p-0">

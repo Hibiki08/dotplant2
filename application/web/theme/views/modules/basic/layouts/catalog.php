@@ -10,6 +10,7 @@ use app\extensions\DefaultTheme\models\ThemeParts;
 use app\web\theme\module\assets\ThemeAsset;
 use app\modules\seo\helpers\HtmlTagHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 //DefaultThemeAsset::register($this);
 ThemeAsset::register($this);
@@ -25,14 +26,83 @@ HtmlTagHelper::addTagOptions('html', 'lang', Yii::$app->language);
 	<!--base href="http://<?= Yii::$app->getModule('core')->getBaseUrl() ?>"-->
 	<title><?= Html::encode($this->title) ?></title>
 	<?= Html::csrfMetaTags() ?>
-    <?php HtmlTagHelper::registerOpenGraph(
-        $this->title,
-        Yii::$app->request->getAbsoluteUrl(),
-        '',
-        Yii::$app->response->meta_description
-    ); ?>
     <?php $this->head(); ?>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+    <?php $subdomain = Yii::$app->subdomainService->getSubdomain(); ?>
+    <?php $contact = $subdomain ? array_shift($subdomain->contacts) : null; ?>
+    <script type="application/ld+json">
+        [
+            {
+                "@type": "EducationalOrganization",
+                "telephone": "<?php echo $contact ? $contact->phone_number : ''; ?>",
+                "email": "mailto:<?php echo $contact ? $contact->email : ''; ?>",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "<?php echo $subdomain ? $subdomain->title : ''; ?>, Россия"
+                }
+            },
+            {
+                "@type": "Organization",
+                "@id": "<?php echo Yii::$app->request->getHostInfo() . Url::to('/about'); ?>",
+                "name": "SexToys36",
+                "description": "<?php echo Yii::$app->request->getHostInfo() . Url::to('/about'); ?>",
+               "url": "<?php echo Yii::$app->request->getHostInfo(); ?>",
+                "logo": "<?php echo Yii::$app->request->getHostInfo() . Url::to('/theme/images/logo.svg'); ?>",
+                "telephone": "<?php echo $contact ? $contact->phone_number : ''; ?>",
+                "email": "<?php echo $contact ? $contact->email : ''; ?>",
+                "foundingDate": "2006",
+                "location": {
+                    "@type": "Place",
+                    "name": "Офис в городе <?php echo $subdomain ? $subdomain->title : ''; ?>",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": "<?php echo $subdomain ? $subdomain->title : ''; ?>, Россия",
+                        "addressCountry": {
+                            "@type": "Country",
+                            "name": "Россия"
+                        }
+                    }
+                },
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "name": "Офис в городе <?php echo $subdomain ? $subdomain->title : ''; ?>",
+                    "telephone": "<?php echo $contact ? $contact->phone_number : ''; ?>",
+                    "contactType": "customer service"
+                },
+                "foundingLocation": {
+                    "@type": "Place",
+                    "name": "<?php echo $subdomain ? $subdomain->title : ''; ?>"
+                }
+            },
+            {
+                "@type": "Product",
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "bestRating": "100",
+                    "ratingCount": "24",
+                    "ratingValue": "87"
+                },
+                "name": "<?php echo $this->title; ?>",
+                "offers": {
+                    "@type": "AggregateOffer",
+                    "highPrice": "$1495",
+                    "lowPrice": "$1250",
+                    "offerCount": "8",
+                    "offers": [
+                        {
+                            "@type": "Offer",
+                            "url": "save-a-lot-monitors.com/dell-30.html"
+                        },
+                        {
+                            "@type": "Offer",
+                            "url": "jondoe-gadgets.com/dell-30.html"
+                        }
+                    ]
+                }
+            }
+        ]
+    </script>
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>

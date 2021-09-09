@@ -6,10 +6,13 @@
  */
 
 //use app\extensions\DefaultTheme\assets\DefaultThemeAsset;
+use app\components\Helper;
 use app\extensions\DefaultTheme\models\ThemeParts;
+use app\models\City;
 use app\web\theme\module\assets\ThemeAsset;
 use app\modules\seo\helpers\HtmlTagHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 //DefaultThemeAsset::register($this);
 ThemeAsset::register($this);
@@ -25,14 +28,80 @@ HtmlTagHelper::addTagOptions('html', 'lang', Yii::$app->language);
 	<!--base href="http://<?= Yii::$app->getModule('core')->getBaseUrl() ?>"-->
 	<title><?= Html::encode($this->title) ?></title>
 	<?= Html::csrfMetaTags() ?>
-    <?php HtmlTagHelper::registerOpenGraph(
-        $this->title,
-        Yii::$app->request->getAbsoluteUrl(),
-        '',
-        Yii::$app->response->meta_description
-    ); ?>
     <?php $this->head(); ?>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+    <?php $subdomain = Yii::$app->subdomainService->getSubdomain(); ?>
+    <?php $contact = $subdomain ? array_shift($subdomain->contacts) : null; ?>
+    <script type="application/ld+json">
+        [
+            {
+                "@context" : "http://schema.org" ,
+                "@type": "EducationalOrganization",
+                "telephone": "<?php echo $contact ? $contact->phone_number : ''; ?>",
+                "email": "mailto:<?php echo $contact ? $contact->email : ''; ?>",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "<?php echo $subdomain ? $subdomain->title : ''; ?>, Россия"
+                }
+            },
+            {
+                "@context" : "http://schema.org" ,
+                "@type": "Organization",
+                "@id": "<?php echo Yii::$app->request->getHostInfo() . Url::to('/about'); ?>",
+                "name": "SexToys36",
+                "description": "<?php echo Yii::$app->response->meta_description; ?>",
+                "url": "<?php echo Yii::$app->request->getHostInfo(); ?>",
+                "logo": "<?php echo Yii::$app->request->getHostInfo() . Url::to('/theme/images/logo.svg'); ?>",
+                "telephone": "<?php echo $contact ? $contact->phone_number : ''; ?>",
+                "email": "<?php echo $contact ? $contact->email : ''; ?>",
+                "foundingDate": "2006",
+                "location": {
+                    "@type": "Place",
+                    "name": "Офис в городе <?php echo $subdomain ? $subdomain->title : ''; ?>",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": "<?php echo $subdomain ? $subdomain->title : ''; ?>, Россия",
+                        "addressCountry": {
+                            "@type": "Country",
+                            "name": "Россия"
+                        }
+                    }
+                },
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "name": "Офис в городе <?php echo $subdomain ? $subdomain->title : ''; ?>",
+                    "telephone": "<?php echo $contact ? $contact->phone_number : ''; ?>",
+                    "contactType": "customer service"
+                },
+                "foundingLocation": {
+                    "@type": "Place",
+                    "name": "<?php echo $subdomain ? $subdomain->title : ''; ?>"
+                }
+            },
+            {
+                "@context" : "http://schema.org" ,
+                "@type": "WebSite",
+                "url": "<?php echo Yii::$app->request->getHostInfo(); ?>",
+                "description": "<?php echo Yii::$app->response->meta_description; ?>",
+                "keywords": "<?php echo $this->title; ?>",
+                "logo": "<?php echo Yii::$app->request->getHostInfo() . Url::to('/theme/images/logo.svg'); ?>",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "<?php echo Yii::$app->request->getHostInfo()
+                        . Url::to(['/search']); ?>?q={search_term_string}"
+                    },
+                    "query-input": {
+                        "@type": "PropertyValueSpecification",
+                        "valueRequired": "http://schema.org/True",
+                        "valueName": "search_term_string"
+                    }
+                }
+            }
+        ]
+    </script>
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
